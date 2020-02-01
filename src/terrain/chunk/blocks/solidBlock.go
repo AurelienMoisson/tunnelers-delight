@@ -5,10 +5,14 @@ type SolidBlock struct {
     solidity int
 }
 
-func (b *SolidBlock) getWeight() (int) {
+func NewSolidBlock(weight, solidity int) (SolidBlock) {
+    return SolidBlock{weight, solidity}
+}
+
+func (b SolidBlock) GetWeight() (int) {
     return b.weight
 }
 
-func (b *SolidBlock) getSolidity() (int) {
+func (b SolidBlock) GetSolidity() (int) {
     return b.solidity
 }
