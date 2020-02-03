@@ -2,5 +2,6 @@ package blocks
 
 type Block interface {
     GetWeight() int
-    GetSolidity() int
+    GetFragility() int
+    IsSolid() bool
 }
