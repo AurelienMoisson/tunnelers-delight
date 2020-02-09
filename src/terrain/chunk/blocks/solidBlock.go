@@ -5,8 +5,8 @@ type SolidBlock struct {
     fragility int
 }
 
-func NewSolidBlock(weight, solidity int) (SolidBlock) {
-    return SolidBlock{weight, solidity}
+func NewSolidBlock(weight, fragility int) (SolidBlock) {
+    return SolidBlock{weight, fragility}
 }
 
 func (b SolidBlock) GetWeight() (int) {
