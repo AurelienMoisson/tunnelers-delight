@@ -20,35 +20,51 @@ type Chunk struct {
     stability []int
 }
 
-func NewChunk(xStart, yStart, zStart, xWidth, yWidth, height uint) (c Chunk) {
-    var blockSlice []blocks.Block
-    blockSlice = make([]blocks.Block, xWidth * yWidth * height)
-    var i uint
-    for i=0; i < xWidth * yWidth * height; i++ {
-        blockSlice[i] = blocks.NewAirBlock()
+func NewChunk(xStart, yStart, zStart, xWidth, yWidth, height uint) (Chunk) {
+    return Chunk{
+        xStart,
+        yStart,
+        zStart,
+        xWidth,
+        yWidth,
+        height,
+        xStart+xWidth,
+        yStart+yWidth,
+        zStart+height,
+        nil,
+        nil,
     }
-    var stability []int
-    stability = make([]int, (xWidth + 2) * (yWidth + 2) * height)
-    c = Chunk{xStart, yStart, zStart, xWidth, yWidth, height, xStart+xWidth, yStart+yWidth, zStart+height, blockSlice, stability}
-    return c
 }
 
-func (c Chunk) getAddress(x,y,z uint) uint {
+func (c *Chunk) Load() {
+    var blockSlice []blocks.Block
+    blockSlice = make([]blocks.Block, c.xWidth * c.yWidth * c.height)
+    var i uint
+    for i=0; i < c.xWidth * c.yWidth * c.height; i++ {
+        blockSlice[i] = blocks.NewAirBlock()
+    }
+    c.blockSlice = blockSlice
+    var stability []int
+    stability = make([]int, (c.xWidth + 2) * (c.yWidth + 2) * c.height)
+    c.stability = stability
+}
+
+func (c *Chunk) getAddress(x,y,z uint) uint {
     if (x==0) {
         panic("out of bounds address")
     }
     return x-c.xStart + (y-c.yStart + (z-c.zStart) * c.yWidth) * c.xWidth
 }
 
-func (c Chunk) getLargeAddress(x,y,z uint) uint {
+func (c *Chunk) getLargeAddress(x,y,z uint) uint {
     return x+1-c.xStart + (y+1-c.yStart + (z-c.zStart) * (c.yWidth+2)) * (c.xWidth+2)
 }
 
-func (c Chunk) GetBlock(x,y,z uint) (blocks.Block) {
+func (c *Chunk) GetBlock(x,y,z uint) (blocks.Block) {
     return c.blockSlice[c.getAddress(x,y,z)]
 }
 
-func (c Chunk) SetBlock(x,y,z uint, b blocks.Block) {
+func (c *Chunk) SetBlock(x,y,z uint, b blocks.Block) {
     c.blockSlice[c.getAddress(x,y,z)] = b
     c.updateStability(x,y,z)
     if c.GetBlock(x,y,z).IsSolid() != b.IsSolid(){
@@ -56,15 +72,15 @@ func (c Chunk) SetBlock(x,y,z uint, b blocks.Block) {
     }
 }
 
-func (c Chunk) GetStability(x,y,z uint) int {
+func (c *Chunk) GetStability(x,y,z uint) int {
     return c.stability[c.getLargeAddress(x,y,z)]
 }
 
-func (c Chunk) setStability(x,y,z uint, stability int) {
+func (c *Chunk) setStability(x,y,z uint, stability int) {
     c.stability[c.getLargeAddress(x,y,z)] = stability
 }
 
-func (c Chunk) SetStability(x,y,z uint, stability int) {
+func (c *Chunk) SetStability(x,y,z uint, stability int) {
     if (x>=c.xStart && x<c.xEnd && y>=c.yStart && y<c.yEnd) {
         log.Fatal("shouldn't SetStability inside chunk borders")
     }
@@ -83,7 +99,7 @@ func (c Chunk) SetStability(x,y,z uint, stability int) {
     }
 }
 
-func (c Chunk) updateStability(x,y,z uint) {
+func (c *Chunk) updateStability(x,y,z uint) {
     if (x<c.xStart || y<c.yStart || x>=c.xEnd || y>=c.yEnd) {
         return
     }
@@ -121,6 +137,6 @@ func (c Chunk) updateStability(x,y,z uint) {
     c.updateStability(x,y-1,z)
 }
 
-func (c Chunk) shouldFall(x,y,z uint) bool {
+func (c *Chunk) shouldFall(x,y,z uint) bool {
     return c.GetStability(x,y,z)>0
 }

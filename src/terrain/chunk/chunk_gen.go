@@ -14,7 +14,8 @@ func NewBlockDistribution(block blocks.Block, distribution noise.Distribution) B
     return BlockDistribution{block, distribution}
 }
 
-func (c Chunk) PopulateChunk(blockDistribs []BlockDistribution) {
+func (c *Chunk) PopulateChunk(blockDistribs []BlockDistribution) {
+    c.Load()
     var bestScore []uint
     totalSize := c.xWidth * c.yWidth * c.height
     bestScore = make([]uint, totalSize)

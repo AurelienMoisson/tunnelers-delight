@@ -9,6 +9,7 @@ import (
 func TestNewChunk(t *testing.T) {
     var chunk Chunk
     chunk = NewChunk(1, 1, 1, 4, 4, 4)
+    chunk.Load()
     var block1 blocks.Block
     block1 = blocks.NewSolidBlock(2, 20)
     chunk.SetBlock(2, 3, 3, block1)
@@ -20,6 +21,7 @@ func TestNewChunk(t *testing.T) {
 func TestStability(t *testing.T) {
     var chunk Chunk
     chunk = NewChunk(1, 1, 1, 4, 4, 4)
+    chunk.Load()
     var block1 blocks.Block
     var air blocks.Block
     block1 = blocks.NewSolidBlock(2, 20)
@@ -53,6 +55,7 @@ func TestStability(t *testing.T) {
 func BenchmarkStability(b *testing.B) {
     var chunk Chunk
     chunk = NewChunk(1, 1, 1, 10, 10, 10)
+    chunk.Load()
     var block1 blocks.Block
     var air blocks.Block
     block1 = blocks.NewSolidBlock(2, 20)
