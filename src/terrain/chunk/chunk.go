@@ -16,6 +16,7 @@ type Chunk struct {
     xEnd uint
     yEnd uint
     zEnd uint
+    loaded bool
     blockSlice []blocks.Block
     stability []int
 }
@@ -31,12 +32,17 @@ func NewChunk(xStart, yStart, zStart, xWidth, yWidth, height uint) (Chunk) {
         xStart+xWidth,
         yStart+yWidth,
         zStart+height,
+        false,
         nil,
         nil,
     }
 }
 
 func (c *Chunk) Load() {
+    if (c.loaded) {
+        return
+    }
+    c.loaded = true
     var blockSlice []blocks.Block
     blockSlice = make([]blocks.Block, c.xWidth * c.yWidth * c.height)
     var i uint
